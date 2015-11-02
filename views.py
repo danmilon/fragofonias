@@ -76,6 +76,12 @@ def error_response(error_message, status=400):
 def change_amount(username):
     wallet = get_or_create_wallet(username)
     wallet.amount = models.Wallet.amount + request.json['amount']
+    log = models.Log(username=auth.username(),
+                     action='change_amount',
+                     action_data=json.dumps({
+                         username: request.json['amount']
+                     }))
+    db.session.add(log)
     db.session.commit()
     return jsonify(**wallet.as_dict())
 
@@ -86,11 +92,19 @@ def change_wallets():
     # if week exists, we cant do this
     current_week_start = get_current_week_start()
     week = db.session.query(models.WeeksDone).get(current_week_start)
+    action_data = {}
     if week is not None:
         return error_response('Αυτή η εβδομάδα έχει ήδη καταχωρηθεί.')
     for username, diff_amount in request.json.items():
         wallet = get_or_create_wallet(username)
         wallet.amount = models.Wallet.amount + diff_amount
+        action_data[username] = diff_amount
+
+    log = models.Log(username=auth.username(),
+                     action='set_all',
+                     action_data=json.dumps(action_data))
+    db.session.add(log)
+
     db.session.add(models.WeeksDone(start=current_week_start))
     db.session.commit()
     return ('', 204)

@@ -114,3 +114,14 @@ class WeeksDone(db.Model):
         return {
             'week': self.week
         }
+
+
+class Log(db.Model):
+    __bind_key__ = 'wallet'
+    __tablename__ = 'log'
+
+    id = db.Column(Integer, primary_key=True)
+    username = db.Column(String, nullable=False)
+    action = db.Column(String, nullable=False)
+    action_data = db.Column(String, nullable=False, default='{}')
+    is_reverted = db.Column(Boolean, nullable=False, default=False)
