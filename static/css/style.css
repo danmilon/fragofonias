@@ -42,6 +42,9 @@ input {
     margin-top: 40px;
 }
 
+body {
+    margin-bottom: 80px;
+}
 
 table           { border-collapse:collapse }
 tr.strikeout td { position:relative        }
