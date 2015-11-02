@@ -1,3 +1,4 @@
+import itertools
 from collections import OrderedDict
 from datetime import timedelta, date
 
@@ -28,8 +29,15 @@ def get_or_create_team_wallet():
 def get_or_create_wallet(username):
     user_wallet = db.session.query(models.Wallet).get(username)
     if not user_wallet:
+        user = db.session.query(models.User).filter(models.User.username == username).first()
+        if user is None and username != TEAM_WALLET_NAME:
+            is_producer = True
+        else:
+            is_producer = False
+
         user_wallet = models.Wallet(username=username,
-                                    amount=0)
+                                    amount=0,
+                                    is_producer=is_producer)
 
         db.session.add(user_wallet)
         db.session.commit()

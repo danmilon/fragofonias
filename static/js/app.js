@@ -503,9 +503,13 @@ var UserWallet = React.createClass({
 	})
     },
     render: function () {
+	var name = this.state.username
+	if (this.state.is_producer) {
+	    name += ' (Παραγωγός)'
+	}
 	return (
 		<tr>
-		<td><strong>{this.state.username}</strong></td>
+		<td><strong>{name}</strong></td>
 		<td>{this.state.amount.toFixed(2)}</td>
 		<td className="text-right"><input value={this.state.input_amount} ref="input_amount"
 	    type="number" step="any" onChange={this.onChangeAmount} /></td>

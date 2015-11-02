@@ -32710,9 +32710,13 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	})
     },
     render: function () {
+	var name = this.state.username
+	if (this.state.is_producer) {
+	    name += ' (Παραγωγός)'
+	}
 	return (
 		React.createElement("tr", null, 
-		React.createElement("td", null, React.createElement("strong", null, this.state.username)), 
+		React.createElement("td", null, React.createElement("strong", null, name)), 
 		React.createElement("td", null, this.state.amount.toFixed(2)), 
 		React.createElement("td", {className: "text-right"}, React.createElement("input", {value: this.state.input_amount, ref: "input_amount", 
 	    type: "number", step: "any", onChange: this.onChangeAmount})), 

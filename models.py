@@ -90,6 +90,7 @@ class Wallet(db.Model):
 
     username = db.Column(String, primary_key=True)
     amount = db.Column(Integer, nullable=False)
+    is_producer = db.Column(Boolean, nullable=False)
 
     __mapper_args__ = {
         'order_by': username
@@ -98,7 +99,8 @@ class Wallet(db.Model):
     def as_dict(self):
         return {
             'username': self.username,
-            'amount': self.amount
+            'amount': self.amount,
+            'is_producer': self.is_producer
         }
 
 
