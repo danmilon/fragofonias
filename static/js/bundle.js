@@ -32728,7 +32728,7 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 
 var UserWallets = React.createClass({displayName: "UserWallets",
     getInitialState: function () {
-	rows = []
+	var rows = []
 	this.props.data.forEach(function (wallet) {
 	    rows.push(React.createElement(UserWallet, {data: wallet, key: wallet.username, ref: wallet.username}))
 	})
@@ -32772,11 +32772,123 @@ var UserWallets = React.createClass({displayName: "UserWallets",
     }
 })
 
+var DeliveryTable = React.createClass({displayName: "DeliveryTable",
+    getTotal: function () {
+	var orderTotal = 0
+	this.state.deliveries.forEach(function (delivery) {
+	    orderTotal += delivery.price * delivery.quantity
+	})
+
+	return Math.round(orderTotal * 10) / 100
+    },
+    getInitialState: function () {
+	var rows = []
+	this.props.data.forEach(function (delivery) {
+	    rows.push(
+		    React.createElement("tr", null, 
+		    React.createElement("td", null, delivery.type), 
+		    React.createElement("td", null, delivery.quantity, " ", delivery.unit), 
+		    React.createElement("td", null, delivery.username)
+		    )
+	    )
+	})
+
+	return {
+	    deliveries: this.props.data,
+	    producer: this.props.producer,
+	    rows: rows
+	}
+    },
+    render: function () {
+	return (
+		React.createElement("div", {className: "delivery-data"}, 
+		React.createElement("div", {className: "row"}, 
+		React.createElement("div", {className: "col-md-8 monospace"}, 
+		React.createElement("h4", {className: "username"}, React.createElement("strong", null, this.state.producer))
+		)
+		), 
+		React.createElement("table", {className: "table table-striped table-condensed"}, 
+		React.createElement("thead", null, 
+		React.createElement("tr", null, 
+		React.createElement("th", {className: "col-md-5"}, "Προϊόν"), 
+		React.createElement("th", {className: "col-md-1"}, "Ποσότ."), 
+		React.createElement("th", {className: "col-md-3"}, "Αγοραστής")
+		)
+		), 
+		React.createElement("tbody", null, 
+		this.state.rows
+		)
+		)
+		)
+	)
+    }
+})
+
+var DeliveryTables = React.createClass({displayName: "DeliveryTables",
+    getInitialState: function () {
+	return {
+	    deliveries: this.props.data
+	}
+    },
+    render: function () {
+	var tables = [];
+	var self = this;
+	Object.keys(this.props.data).forEach(function (producer) {
+	    delivery_data = self.props.data[producer]
+	    tables.push(
+		    React.createElement(DeliveryTable, {
+		data: delivery_data, 
+		producer: producer, 
+		ref: producer + '_table', 
+		key: producer + '_table'})
+	    )
+	})
+
+	if (this.state.error_message) {
+	    return (
+		    React.createElement("div", {id: "no-results", className: "row vertical-align"}, 
+		    React.createElement("div", {className: "col-xs-12"}, 
+		    React.createElement("p", {className: "bg-danger"}, 
+		    this.state.error_message
+		)
+		    )
+		    )
+	    )
+	}
+
+	if (tables.length === 0) {
+	    return (
+		    React.createElement("div", {id: "no-results", className: "row vertical-align"}, 
+		    React.createElement("div", {className: "col-xs-12"}, 
+		    React.createElement("p", {className: "bg-warning"}, 
+		    "Δεν υπάρχουν ακόμα παραγγελείες για αυτή την εβδομάδα."
+		    )
+		    )
+		    )
+	    )
+	}
+
+	return (
+		React.createElement("div", {id: "delivery-tables"}, 
+		tables
+	    )
+	)
+    }
+})
+
 var orders_app = document.getElementById('orders-app')
 if (orders_app != null) {
     ReactDOM.render(
 	    React.createElement(UserTables, {data: data.user_data}),
 	orders_app
+    )
+}
+
+var deliveries_app = document.getElementById('deliveries-app')
+if (deliveries_app != null) {
+    ReactDOM.render(
+	    React.createElement(DeliveryTables, {data: data.deliveries}),
+	deliveries_app
     )
 }
 

@@ -133,9 +133,17 @@ def index():
         data['user'] = data['user'].as_dict()
         data['orders'] = [order.as_dict() for order in data['orders']]
 
+    # dictify orders
+    orders = [order.as_dict() for order in orders]
+    orders = sorted(orders, key=lambda x: x['producer'])
+    grouped_orders = {}
+    for key, group in itertools.groupby(orders, key=lambda x: x['producer']):
+        grouped_orders[key] = list(group)
+
     data = {
         'user_data': data_by_user,
-        'wallets': wallets
+        'wallets': wallets,
+        'deliveries': grouped_orders
     }
 
     return render_template(

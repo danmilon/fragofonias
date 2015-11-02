@@ -27,11 +27,25 @@
   <body>
     <div class="container" id="root-container">
       <ul class="nav nav-tabs">
-	<li role="presentation" class="active"><a href="#orders" data-toggle="tab">Παραγγελείες</a></li>
+	<li role="presentation" class="active"><a href="#deliveries" data-toggle="tab">Παραλαβές</a></li>
+	<li role="presentation" class=""><a href="#orders" data-toggle="tab">Παραγγελείες</a></li>
 	<li role="presentation"><a href="#wallets" data-toggle="tab">Πορτοφόλια</a></li>
       </ul>
       <div class="tab-content">
-	<div role="tabpanel" class="tab-pane active" id="orders">
+	<div role="tabpanel" class="tab-pane active" id="deliveries">
+	  {% if error_message %}
+	  <div id="no-results" class="row vertical-align">
+	    <div class="col-xs-12">
+	      <p class="bg-danger">
+		{{error_message}}
+	      </p>
+	    </div>
+	  </div>
+	  {% else %}
+	  <div id="deliveries-app"></div>
+	  {% endif %}
+	</div>
+	<div role="tabpanel" class="tab-pane" id="orders">
 	  {% if error_message %}
 	  <div id="no-results" class="row vertical-align">
 	    <div class="col-xs-12">

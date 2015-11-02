@@ -521,7 +521,7 @@ var UserWallet = React.createClass({
 
 var UserWallets = React.createClass({
     getInitialState: function () {
-	rows = []
+	var rows = []
 	this.props.data.forEach(function (wallet) {
 	    rows.push(<UserWallet data={wallet} key={wallet.username} ref={wallet.username} />)
 	})
@@ -565,11 +565,123 @@ var UserWallets = React.createClass({
     }
 })
 
+var DeliveryTable = React.createClass({
+    getTotal: function () {
+	var orderTotal = 0
+	this.state.deliveries.forEach(function (delivery) {
+	    orderTotal += delivery.price * delivery.quantity
+	})
+
+	return Math.round(orderTotal * 10) / 100
+    },
+    getInitialState: function () {
+	var rows = []
+	this.props.data.forEach(function (delivery) {
+	    rows.push(
+		    <tr>
+		    <td>{delivery.type}</td>
+		    <td>{delivery.quantity} {delivery.unit}</td>
+		    <td>{delivery.username}</td>
+		    </tr>
+	    )
+	})
+
+	return {
+	    deliveries: this.props.data,
+	    producer: this.props.producer,
+	    rows: rows
+	}
+    },
+    render: function () {
+	return (
+		<div className="delivery-data">
+		<div className="row">
+		<div className="col-md-8 monospace">
+		<h4 className="username"><strong>{this.state.producer}</strong></h4>
+		</div>
+		</div>
+		<table className="table table-striped table-condensed">
+		<thead>
+		<tr>
+		<th className="col-md-5">Προϊόν</th>
+		<th className="col-md-1">Ποσότ.</th>
+		<th className="col-md-3">Αγοραστής</th>
+		</tr>
+		</thead>
+		<tbody>
+		{this.state.rows}
+		</tbody>
+		</table>
+		</div>
+	)
+    }
+})
+
+var DeliveryTables = React.createClass({
+    getInitialState: function () {
+	return {
+	    deliveries: this.props.data
+	}
+    },
+    render: function () {
+	var tables = [];
+	var self = this;
+	Object.keys(this.props.data).forEach(function (producer) {
+	    delivery_data = self.props.data[producer]
+	    tables.push(
+		    <DeliveryTable
+		data={delivery_data}
+		producer={producer}
+		ref={producer + '_table'}
+		key={producer + '_table'} />
+	    )
+	})
+
+	if (this.state.error_message) {
+	    return (
+		    <div id="no-results" className="row vertical-align">
+		    <div className="col-xs-12">
+		    <p className="bg-danger">
+		    {this.state.error_message}
+		</p>
+		    </div>
+		    </div>
+	    )
+	}
+
+	if (tables.length === 0) {
+	    return (
+		    <div id="no-results" className="row vertical-align">
+		    <div className="col-xs-12">
+		    <p className="bg-warning">
+		    Δεν υπάρχουν ακόμα παραγγελείες για αυτή την εβδομάδα.
+		    </p>
+		    </div>
+		    </div>
+	    )
+	}
+
+	return (
+		<div id="delivery-tables">
+		{tables}
+	    </div>
+	)
+    }
+})
+
 var orders_app = document.getElementById('orders-app')
 if (orders_app != null) {
     ReactDOM.render(
 	    <UserTables data={data.user_data}/>,
 	orders_app
+    )
+}
+
+var deliveries_app = document.getElementById('deliveries-app')
+if (deliveries_app != null) {
+    ReactDOM.render(
+	    <DeliveryTables data={data.deliveries} />,
+	deliveries_app
     )
 }
 
