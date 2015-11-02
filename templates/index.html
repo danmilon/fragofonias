@@ -26,6 +26,9 @@
   </head>
   <body>
     <div class="container" id="root-container">
+      {% if week %}
+      <h1>Τρέχουσα εβδομάδα: {{week[0]}} - {{week[1]}}</h1>
+      {% endif %}
       <ul class="nav nav-tabs">
 	<li role="presentation" class="active"><a href="#deliveries" data-toggle="tab">Παραλαβές</a></li>
 	<li role="presentation" class=""><a href="#orders" data-toggle="tab">Παραγγελείες</a></li>

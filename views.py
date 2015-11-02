@@ -178,6 +178,7 @@ def index():
 
     return render_template(
         'index.html',
+        week=[current_week_start, current_week_end],
         data_json=json.dumps(data))
 
 
