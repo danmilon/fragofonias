@@ -5,6 +5,8 @@ from datetime import timedelta, date
 from sqlalchemy.orm import joinedload
 import flask.json as json
 from flask import render_template, jsonify, request
+from flask_httpauth import HTTPBasicAuth
+from passlib.hash import phpass
 
 from app import app, db
 import models
@@ -14,6 +16,17 @@ import models
 # Wednesday = 2
 START_DAY = 2
 TEAM_WALLET_NAME = '!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'
+
+auth = HTTPBasicAuth(realm='CSA Fragofonias')
+
+
+@auth.verify_password
+def verify_password(username, password):
+    user = db.session.query(models.User).filter(models.User.username == username).first()
+    if not user:
+        return False
+
+    return phpass.verify(password, user.password)
 
 
 def create_all_wallets():
@@ -59,6 +72,7 @@ def error_response(error_message, status=400):
 
 
 @app.route('/wallets/<username>/change_amount', methods=['POST'])
+@auth.login_required
 def change_amount(username):
     wallet = get_or_create_wallet(username)
     wallet.amount = models.Wallet.amount + request.json['amount']
@@ -67,6 +81,7 @@ def change_amount(username):
 
 
 @app.route('/wallets/set_all', methods=['POST'])
+@auth.login_required
 def change_wallets():
     # if week exists, we cant do this
     current_week_start = get_current_week_start()
@@ -82,6 +97,7 @@ def change_wallets():
 
 
 @app.route('/')
+@auth.login_required
 def index():
     current_week_start = get_current_week_start()
     current_week_end = current_week_start + timedelta(days=7)
