@@ -130,6 +130,7 @@ def index():
         return render_template(
             'index.html',
             error_message=error_message,
+            username=auth.username(),
             data_json=json.dumps(({
                 'wallets': wallets,
                 'user_data': {}
@@ -179,6 +180,7 @@ def index():
     return render_template(
         'index.html',
         week=[current_week_start, current_week_end],
+        username=auth.username(),
         data_json=json.dumps(data))
 
 

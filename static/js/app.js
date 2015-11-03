@@ -122,7 +122,7 @@ var UserTableRow = React.createClass({
 
 	return (
 		<tr className={trClass}>
-		<td>{data.type}</td>
+		<td>{data.type} {data.variety} ({data.producer})</td>
 		<td className="monospace">{this.state.delivered_quantity} {this.props.data.unit}</td>
 		<td className="monospace">{data.price.toFixed(2)}</td>
 		<td className="monospace">{this.getTotalPrice().toFixed(2)}</td>
@@ -579,7 +579,7 @@ var DeliveryTable = React.createClass({
 	this.props.data.forEach(function (delivery) {
 	    rows.push(
 		    <tr>
-		    <td>{delivery.type}</td>
+		    <td>{delivery.type} {delivery.variety}</td>
 		    <td>{delivery.quantity} {delivery.unit}</td>
 		    <td>{delivery.username}</td>
 		    </tr>

@@ -27,7 +27,8 @@
   <body>
     <div class="container" id="root-container">
       {% if week %}
-      <h1>Τρέχουσα εβδομάδα: {{week[0]}} - {{week[1]}}</h1>
+      <h1>Τρέχουσα εβδομάδα: <span class="monospace">{{week[0]}} - {{week[1]}}</a></h1>
+      <h2>Συνδεδεμένος ως: <strong class="monospace">{{username}}</strong></h2>
       {% endif %}
       <ul class="nav nav-tabs">
 	<li role="presentation" class="active"><a href="#deliveries" data-toggle="tab">Παραλαβές</a></li>

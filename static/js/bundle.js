@@ -32329,7 +32329,7 @@ var UserTableRow = React.createClass({displayName: "UserTableRow",
 
 	return (
 		React.createElement("tr", {className: trClass}, 
-		React.createElement("td", null, data.type), 
+		React.createElement("td", null, data.type, " ", data.variety, " (", data.producer, ")"), 
 		React.createElement("td", {className: "monospace"}, this.state.delivered_quantity, " ", this.props.data.unit), 
 		React.createElement("td", {className: "monospace"}, data.price.toFixed(2)), 
 		React.createElement("td", {className: "monospace"}, this.getTotalPrice().toFixed(2)), 
@@ -32786,7 +32786,7 @@ var DeliveryTable = React.createClass({displayName: "DeliveryTable",
 	this.props.data.forEach(function (delivery) {
 	    rows.push(
 		    React.createElement("tr", null, 
-		    React.createElement("td", null, delivery.type), 
+		    React.createElement("td", null, delivery.type, " ", delivery.variety), 
 		    React.createElement("td", null, delivery.quantity, " ", delivery.unit), 
 		    React.createElement("td", null, delivery.username)
 		    )
