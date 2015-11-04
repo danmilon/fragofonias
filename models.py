@@ -1,7 +1,7 @@
+from datetime import datetime
 from sqlalchemy import (
     Integer, String, Float, orm, DateTime, ForeignKey, Date, Boolean)
 from sqlalchemy.dialects.mysql import TEXT, TINYTEXT
-
 from app import db
 
 
@@ -109,6 +109,7 @@ class WeeksDone(db.Model):
     __tablename__ = 'weeks_done'
 
     start = db.Column(Date, primary_key=True)
+    created_at = db.Column(DateTime, default=datetime.now)
 
     def as_dict(self):
         return {

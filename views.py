@@ -58,11 +58,17 @@ def get_or_create_wallet(username):
 
 
 def get_current_week_start():
-    today = date.today()
-    # TODO: REMOVE THIS (ITS DEBUG CRAP)
-    # today = today - timedelta(weeks=7)
-    offset = (today.weekday() - START_DAY) % 7
-    return (today - timedelta(days=offset))
+    last_week = db.session.query(models.WeeksDone).order_by(models.WeeksDone.start).first()
+    if last_week:
+        last_week_start = last_week.start + timedelta(weeks=1)
+    else:
+        today = date.today() - timedelta(weeks=1)
+        # TODO: REMOVE THIS (ITS DEBUG CRAP)
+        # today = today - timedelta(weeks=7)
+        offset = (today.weekday() - START_DAY) % 7
+        last_week_start = today - timedelta(days=offset)
+
+    return last_week_start
 
 
 def error_response(error_message, status=400):
