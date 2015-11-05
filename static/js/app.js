@@ -349,6 +349,7 @@ var UserTables = React.createClass({
 	    dataType: 'json',
 	    success: function (data, textStatus, jqXHR) {
 		self.setState({done: true})
+		window.location.reload()
 	    },
 	    error: function (data, textStatus, jqXHR) {
 		var error_message = data.responseJSON.error_message
