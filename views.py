@@ -1,7 +1,6 @@
 import itertools
 from collections import OrderedDict
 from datetime import timedelta, date
-import subprocess
 
 from sqlalchemy.orm import joinedload
 import flask.json as json
@@ -18,17 +17,9 @@ import models
 START_DAY = 2
 TEAM_WALLET_NAME = '!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'
 ROLE_MANAGER = 'manager'
+APP_VERSION = 'v1'
 
 auth = HTTPBasicAuth(realm='CSA Fragofonias')
-
-
-def get_version():
-    proc = subprocess.Popen(['git', 'rev-parse', 'HEAD'], stdout=subprocess.PIPE)
-    (output, err) = proc.communicate()
-    proc.wait()
-    return output.decode()[:6]
-
-APP_VERSION = get_version()
 
 
 @auth.verify_password

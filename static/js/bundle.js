@@ -32253,10 +32253,6 @@ var UserTableRow = React.createClass({displayName: "UserTableRow",
 	    new_quantity = 0
 	}
 
-	if (new_quantity > this.state.quantity) {
-	    new_quantity = this.state.quantity
-	}
-
 	this.setDeliveredQuantity(new_quantity, true)
     },
     onPartialLoseFocus: function () {
@@ -32283,7 +32279,7 @@ var UserTableRow = React.createClass({displayName: "UserTableRow",
 	if (this.state.partially_delivered) {
 	    partial_delivery_input = (
 		    React.createElement("input", {className: "col-md-4 pull-right", autoFocus: true, onBlur: this.onPartialLoseFocus, type: "number", min: "0", step: "any", 
-		max: this.state.quantity, ref: "partial_amount", 
+		ref: "partial_amount", 
 		value: this.state.delivered_quantity, onChange: this.onPartialQuantityChange})
 	    )
 	}
@@ -32331,8 +32327,8 @@ var UserTableRow = React.createClass({displayName: "UserTableRow",
 		React.createElement("tr", {className: trClass}, 
 		React.createElement("td", null, data.type, " ", data.variety, " (", data.producer, ")"), 
 		React.createElement("td", {className: "monospace"}, this.state.delivered_quantity, " ", this.props.data.unit), 
-		React.createElement("td", {className: "monospace"}, data.price.toFixed(2)), 
-		React.createElement("td", {className: "monospace"}, this.getTotalPrice().toFixed(2)), 
+		React.createElement("td", {className: "monospace"}, data.price.toFixed(2), "€"), 
+		React.createElement("td", {className: "monospace"}, this.getTotalPrice().toFixed(2), "€"), 
 		delivery_col
 	    )
 	)
@@ -32414,29 +32410,29 @@ var UserTable = React.createClass({displayName: "UserTable",
 	return (
 		React.createElement("div", {className: "user-data"}, 
 		React.createElement("div", {className: "row"}, 
-		React.createElement("div", {className: "col-md-8 monospace"}, 
+		React.createElement("div", {className: "col-md-7 monospace"}, 
 		React.createElement("h4", {className: "username"}, React.createElement("strong", null, this.props.data.user.name)), 
 		React.createElement("p", null, "Νέο Πορτοφόλι: ", ' ', 
-	    this.state.new_wallet_amount.toFixed(2), " - ", ' ', 
-	    this.state.order_total.toFixed(2), " - ", this.state.extra_amount.toFixed(2), " =", 
+	    this.state.new_wallet_amount.toFixed(2), "€ - ", ' ', 
+	    this.state.order_total.toFixed(2), "€ - ", this.state.extra_amount.toFixed(2), "€ =", 
 		' ', " ", (this.state.new_wallet_amount -
 			this.state.order_total - this.state.extra_amount).toFixed(2), "€")
 		), 
-		React.createElement("div", {className: "col-md-4"}, 
+		React.createElement("div", {className: "col-md-5"}, 
 		React.createElement("div", {className: "row"}, 
 		React.createElement("input", {
-	    ref: "input_deposit_amount", className: "col-md-4 col-md-push-2", 
+	    ref: "input_deposit_amount", className: "col-md-3 col-md-push-2", 
 	    type: "number", min: "0", step: "any", onChange: this.onExtraChange, 
 	    value: this.state.extra_amount.toFixed(2)}), 
 		React.createElement("div", {className: "col-md-4 col-md-push-3"}, 
-		"Συνεισφορά"
+		"Συνεισφορά (€)"
 	    )
 		), 
 		React.createElement("div", {className: "row"}, 
 		React.createElement("form", {action: "#", onSubmit: this.onDeposit}, 
-		React.createElement("input", {value: this.state.deposit_amount, ref: "input_deposit_amount", className: "col-md-4 col-md-push-2", type: "number", min: "0", onChange: this.onDepositAmountChange}), 
+		React.createElement("input", {value: this.state.deposit_amount, ref: "input_deposit_amount", className: "col-md-3 col-md-push-2", type: "number", min: "0", onChange: this.onDepositAmountChange}), 
 		React.createElement("input", {type: "submit", className: "btn btn-default" + ' ' +
-"btn-sm col-md-4 col-md-push-3", value: "Κατάθεση"})
+"btn-sm col-md-4 col-md-push-3", value: "Κατάθεση (€)"})
 		)
 		)
 		)
@@ -32458,9 +32454,9 @@ var UserTable = React.createClass({displayName: "UserTable",
 		React.createElement("td", null), 
 		React.createElement("td", null), 
 		React.createElement("td", {className: "monospace"}, 
-		this.state.order_total.toFixed(2)
+		this.state.order_total.toFixed(2), "€"
 	    ), 
-		React.createElement("td", {className: "monospace"}, "+ ", this.state.extra_amount.toFixed(2), " = ", (this.state.order_total + this.state.extra_amount).toFixed(2))
+		React.createElement("td", {className: "monospace"}, "+ ", this.state.extra_amount.toFixed(2), "€ = ", (this.state.order_total + this.state.extra_amount).toFixed(2), "€")
 		)
 		)
 		)
@@ -32543,7 +32539,12 @@ var UserTables = React.createClass({displayName: "UserTables",
 		    request[row.props.data.producer] = 0
 		}
 
-		request[row.props.data.producer] += row.getTotalPrice()
+		// take 5% from producers
+		var five_percent = 0.05 * row.getTotalPrice()
+		var amount_for_producer = Math.round((row.getTotalPrice() -
+						      five_percent) * 10) / 10
+		request['!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'] += five_percent
+		request[row.props.data.producer] += amount_for_producer
 	    }
 	}
 
@@ -32555,6 +32556,7 @@ var UserTables = React.createClass({displayName: "UserTables",
 	    dataType: 'json',
 	    success: function (data, textStatus, jqXHR) {
 		self.setState({done: true})
+		window.location.reload()
 	    },
 	    error: function (data, textStatus, jqXHR) {
 		var error_message = data.responseJSON.error_message
@@ -32717,9 +32719,9 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	return (
 		React.createElement("tr", null, 
 		React.createElement("td", null, React.createElement("strong", null, name)), 
-		React.createElement("td", null, this.state.amount.toFixed(2)), 
-		React.createElement("td", {className: "text-right"}, React.createElement("input", {value: this.state.input_amount, ref: "input_amount", 
-	    type: "number", step: "any", onChange: this.onChangeAmount})), 
+		React.createElement("td", null, this.state.amount.toFixed(2), "€"), 
+		React.createElement("td", {className: "text-right"}, React.createElement("input", {className: "col-md-5", value: this.state.input_amount, ref: "input_amount", 
+	    type: "number", step: "any", onChange: this.onChangeAmount}), React.createElement("span", {className: "col-md-1"}, "€")), 
 		React.createElement("td", {className: "text-right"}, React.createElement("input", {onClick: this.onCommit, type: "button", className: "btn btn-primary btn-sm", value: "Αύξηση/Μείωση"}))
 		)
 	)
@@ -32758,7 +32760,7 @@ var UserWallets = React.createClass({displayName: "UserWallets",
 		React.createElement("table", {className: "table table-striped"}, 
 		React.createElement("thead", null, 
 		React.createElement("tr", null, 
-		React.createElement("th", null, "Όνομα ", React.createElement("input", {type: "text", onChange: this.onFilter})), 
+		React.createElement("th", null, "Αναζήτηση με Όνομα ", React.createElement("input", {type: "text", onChange: this.onFilter})), 
 		React.createElement("th", null, "Ποσό"), 
 		React.createElement("th", null), 
 		React.createElement("th", null)
@@ -32783,9 +32785,9 @@ var DeliveryTable = React.createClass({displayName: "DeliveryTable",
     },
     getInitialState: function () {
 	var rows = []
-	this.props.data.forEach(function (delivery) {
+	this.props.data.forEach(function (delivery, idx) {
 	    rows.push(
-		    React.createElement("tr", null, 
+		    React.createElement("tr", {key: idx}, 
 		    React.createElement("td", null, delivery.type, " ", delivery.variety), 
 		    React.createElement("td", null, delivery.quantity, " ", delivery.unit), 
 		    React.createElement("td", null, delivery.username)
