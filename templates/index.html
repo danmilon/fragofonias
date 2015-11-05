@@ -27,46 +27,52 @@
   </head>
   <body>
     <div class="container" id="root-container">
-      {% if week %}
-      <h1>Τρέχουσα εβδομάδα: <span class="monospace">{{week[0]}} - {{week[1]}}</a></h1>
-      <h2>Συνδεδεμένος ως: <strong class="monospace">{{username}}</strong></h2>
+      {% if not is_manager %}
+        <h2>Είσαι ο χρήστης <span class="monospace">{{username}}</span> και
+      έχεις <span class="monospace">{{user_wallet.amount}}€</span> στο
+      πορτοφόλι σου.</h2>
+      {% else %}
+        {% if week %}
+        <h1>Τρέχουσα εβδομάδα: <span class="monospace">{{week[0]}} - {{week[1]}}</a></h1>
+        <h2>Συνδεδεμένος ως: <strong class="monospace">{{username}}</strong></h2>
+        {% endif %}
+        <ul class="nav nav-tabs">
+  	<li role="presentation" class="active"><a href="#deliveries" data-toggle="tab">Παραλαβές</a></li>
+  	<li role="presentation" class=""><a href="#orders" data-toggle="tab">Παραγγελείες</a></li>
+  	<li role="presentation"><a href="#wallets" data-toggle="tab">Πορτοφόλια</a></li>
+        </ul>
+        <div class="tab-content">
+  	<div role="tabpanel" class="tab-pane active" id="deliveries">
+  	  {% if error_message %}
+  	  <div id="no-results" class="row vertical-align">
+  	    <div class="col-xs-12">
+  	      <p class="bg-danger">
+  		{{error_message}}
+  	      </p>
+  	    </div>
+  	  </div>
+  	  {% else %}
+  	  <div id="deliveries-app"></div>
+  	  {% endif %}
+  	</div>
+  	<div role="tabpanel" class="tab-pane" id="orders">
+  	  {% if error_message %}
+  	  <div id="no-results" class="row vertical-align">
+  	    <div class="col-xs-12">
+  	      <p class="bg-danger">
+  		{{error_message}}
+  	      </p>
+  	    </div>
+  	  </div>
+  	  {% else %}
+  	  <div id="orders-app"></div>
+  	  {% endif %}
+  	</div>
+  	<div role="tabpanel" class="tab-pane" id="wallets">
+  	  <div id="wallets-app"></div>
+  	</div>
+        </div>
       {% endif %}
-      <ul class="nav nav-tabs">
-	<li role="presentation" class="active"><a href="#deliveries" data-toggle="tab">Παραλαβές</a></li>
-	<li role="presentation" class=""><a href="#orders" data-toggle="tab">Παραγγελείες</a></li>
-	<li role="presentation"><a href="#wallets" data-toggle="tab">Πορτοφόλια</a></li>
-      </ul>
-      <div class="tab-content">
-	<div role="tabpanel" class="tab-pane active" id="deliveries">
-	  {% if error_message %}
-	  <div id="no-results" class="row vertical-align">
-	    <div class="col-xs-12">
-	      <p class="bg-danger">
-		{{error_message}}
-	      </p>
-	    </div>
-	  </div>
-	  {% else %}
-	  <div id="deliveries-app"></div>
-	  {% endif %}
-	</div>
-	<div role="tabpanel" class="tab-pane" id="orders">
-	  {% if error_message %}
-	  <div id="no-results" class="row vertical-align">
-	    <div class="col-xs-12">
-	      <p class="bg-danger">
-		{{error_message}}
-	      </p>
-	    </div>
-	  </div>
-	  {% else %}
-	  <div id="orders-app"></div>
-	  {% endif %}
-	</div>
-	<div role="tabpanel" class="tab-pane" id="wallets">
-	  <div id="wallets-app"></div>
-	</div>
-      </div>
     </div>
   </body>
   <script src="{{ url_for('static', filename='js/bundle.js')}}"></script>

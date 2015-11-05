@@ -104,6 +104,14 @@ class Wallet(db.Model):
         }
 
 
+class UserRoles(db.Model):
+    __bind_key__ = 'wallet'
+    __tablename__ = 'user_roles'
+
+    username = db.Column(String, primary_key=True)
+    role = db.Column(String, nullable=False, primary_key=True)
+
+
 class WeeksDone(db.Model):
     __bind_key__ = 'wallet'
     __tablename__ = 'weeks_done'

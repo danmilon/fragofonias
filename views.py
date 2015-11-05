@@ -17,6 +17,7 @@ import models
 # Wednesday = 2
 START_DAY = 2
 TEAM_WALLET_NAME = '!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'
+ROLE_MANAGER = 'manager'
 
 auth = HTTPBasicAuth(realm='CSA Fragofonias')
 
@@ -129,6 +130,20 @@ def change_wallets():
 @app.route('/')
 @auth.login_required
 def index():
+    user = db.session.query(models.User).filter(models.User.username == auth.username()).one()
+    user_roles = db.session.query(models.UserRoles).filter(models.UserRoles.username == user.username)
+    user_roles = [role.role for role in user_roles]
+    is_manager = ROLE_MANAGER in user_roles
+    user_wallet = get_or_create_wallet(user.username)
+
+    if not is_manager:
+        return render_template(
+            'index.html',
+            is_manager=False,
+            version=APP_VERSION,
+            username=user.username,
+            user_wallet=user_wallet)
+
     current_week_start = get_current_week_start()
     current_week_end = current_week_start + timedelta(days=7)
     week = db.session.query(models.WeeksDone).get(current_week_start)
@@ -145,6 +160,7 @@ def index():
         )
         return render_template(
             'index.html',
+            is_manager=is_manager,
             error_message=error_message,
             version=APP_VERSION,
             username=auth.username(),
@@ -196,6 +212,7 @@ def index():
 
     return render_template(
         'index.html',
+        is_manager=is_manager,
         week=[current_week_start, current_week_end],
         version=APP_VERSION,
         username=auth.username(),
