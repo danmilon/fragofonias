@@ -46,10 +46,6 @@ var UserTableRow = React.createClass({
 	    new_quantity = 0
 	}
 
-	if (new_quantity > this.state.quantity) {
-	    new_quantity = this.state.quantity
-	}
-
 	this.setDeliveredQuantity(new_quantity, true)
     },
     onPartialLoseFocus: function () {
@@ -76,7 +72,7 @@ var UserTableRow = React.createClass({
 	if (this.state.partially_delivered) {
 	    partial_delivery_input = (
 		    <input className="col-md-4 pull-right" autoFocus onBlur={this.onPartialLoseFocus} type="number" min="0" step="any"
-		max={this.state.quantity} ref="partial_amount"
+		ref="partial_amount"
 		value={this.state.delivered_quantity} onChange={this.onPartialQuantityChange} />
 	    )
 	}
