@@ -124,8 +124,8 @@ var UserTableRow = React.createClass({
 		<tr className={trClass}>
 		<td>{data.type} {data.variety} ({data.producer})</td>
 		<td className="monospace">{this.state.delivered_quantity} {this.props.data.unit}</td>
-		<td className="monospace">{data.price.toFixed(2)}</td>
-		<td className="monospace">{this.getTotalPrice().toFixed(2)}</td>
+		<td className="monospace">{data.price.toFixed(2)}€</td>
+		<td className="monospace">{this.getTotalPrice().toFixed(2)}€</td>
 		{delivery_col}
 	    </tr>
 	)
@@ -207,29 +207,29 @@ var UserTable = React.createClass({
 	return (
 		<div className="user-data">
 		<div className="row">
-		<div className="col-md-8 monospace">
+		<div className="col-md-7 monospace">
 		<h4 className="username"><strong>{this.props.data.user.name}</strong></h4>
 		<p>Νέο Πορτοφόλι: {' '}
-	    {this.state.new_wallet_amount.toFixed(2)} - {' '}
-	    {this.state.order_total.toFixed(2)} - {this.state.extra_amount.toFixed(2)} =
+	    {this.state.new_wallet_amount.toFixed(2)}€ - {' '}
+	    {this.state.order_total.toFixed(2)}€ - {this.state.extra_amount.toFixed(2)}€ =
 		{' '} {(this.state.new_wallet_amount -
 			this.state.order_total - this.state.extra_amount).toFixed(2)}€</p>
 		</div>
-		<div className="col-md-4">
+		<div className="col-md-5">
 		<div className="row">
 		<input
-	    ref="input_deposit_amount" className="col-md-4 col-md-push-2"
+	    ref="input_deposit_amount" className="col-md-3 col-md-push-2"
 	    type="number" min="0" step="any" onChange={this.onExtraChange}
 	    value={this.state.extra_amount.toFixed(2)} />
 		<div className="col-md-4 col-md-push-3">
-		Συνεισφορά
+		Συνεισφορά (€)
 	    </div>
 		</div>
 		<div className="row">
 		<form action="#" onSubmit={this.onDeposit}>
-		<input value={this.state.deposit_amount} ref="input_deposit_amount" className="col-md-4 col-md-push-2" type="number" min="0" onChange={this.onDepositAmountChange} />
+		<input value={this.state.deposit_amount} ref="input_deposit_amount" className="col-md-3 col-md-push-2" type="number" min="0" onChange={this.onDepositAmountChange} />
 		<input type="submit" className="btn btn-default
-btn-sm col-md-4 col-md-push-3" value="Κατάθεση"/>
+btn-sm col-md-4 col-md-push-3" value="Κατάθεση (€)"/>
 		</form>
 		</div>
 		</div>
@@ -251,9 +251,9 @@ btn-sm col-md-4 col-md-push-3" value="Κατάθεση"/>
 		<td></td>
 		<td></td>
 		<td className="monospace">
-		{this.state.order_total.toFixed(2)}
+		{this.state.order_total.toFixed(2)}€
 	    </td>
-		<td className="monospace">+ {this.state.extra_amount.toFixed(2)} = {(this.state.order_total + this.state.extra_amount).toFixed(2)}</td>
+		<td className="monospace">+ {this.state.extra_amount.toFixed(2)}€ = {(this.state.order_total + this.state.extra_amount).toFixed(2)}€</td>
 		</tr>
 		</tbody>
 		</table>
@@ -336,7 +336,12 @@ var UserTables = React.createClass({
 		    request[row.props.data.producer] = 0
 		}
 
-		request[row.props.data.producer] += row.getTotalPrice()
+		// take 5% from producers
+		var five_percent = 0.05 * row.getTotalPrice()
+		var amount_for_producer = Math.round((row.getTotalPrice() -
+						      five_percent) * 10) / 10
+		request['!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'] += five_percent
+		request[row.props.data.producer] += amount_for_producer
 	    }
 	}
 
@@ -510,9 +515,9 @@ var UserWallet = React.createClass({
 	return (
 		<tr>
 		<td><strong>{name}</strong></td>
-		<td>{this.state.amount.toFixed(2)}</td>
-		<td className="text-right"><input value={this.state.input_amount} ref="input_amount"
-	    type="number" step="any" onChange={this.onChangeAmount} /></td>
+		<td>{this.state.amount.toFixed(2)}€</td>
+		<td className="text-right"><input className="col-md-5" value={this.state.input_amount} ref="input_amount"
+	    type="number" step="any" onChange={this.onChangeAmount} /><span className="col-md-1">€</span></td>
 		<td className="text-right"><input onClick={this.onCommit} type="button" className="btn btn-primary btn-sm" value="Αύξηση/Μείωση"/></td>
 		</tr>
 	)
@@ -551,7 +556,7 @@ var UserWallets = React.createClass({
 		<table className="table table-striped">
 		<thead>
 		<tr>
-		<th>Όνομα <input type="text" onChange={this.onFilter}/></th>
+		<th>Αναζήτηση με Όνομα <input type="text" onChange={this.onFilter}/></th>
 		<th>Ποσό</th>
 		<th></th>
 		<th></th>
@@ -576,9 +581,9 @@ var DeliveryTable = React.createClass({
     },
     getInitialState: function () {
 	var rows = []
-	this.props.data.forEach(function (delivery) {
+	this.props.data.forEach(function (delivery, idx) {
 	    rows.push(
-		    <tr>
+		    <tr key={idx}>
 		    <td>{delivery.type} {delivery.variety}</td>
 		    <td>{delivery.quantity} {delivery.unit}</td>
 		    <td>{delivery.username}</td>
