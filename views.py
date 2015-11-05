@@ -130,7 +130,13 @@ def change_wallets():
 @app.route('/')
 @auth.login_required
 def index():
-    user = db.session.query(models.User).filter(models.User.username == auth.username()).one()
+    user = db.session.query(models.User).filter(
+        models.User.username == auth.username()).one()
+    # force creation of team wallet if it doesnt exist
+    get_or_create_team_wallet()
+    create_all_wallets()
+    wallets = db.session.query(models.Wallet).all()
+    box_amount = sum((wallet.amount for wallet in wallets if not wallet.is_producer))
     user_roles = db.session.query(models.UserRoles).filter(models.UserRoles.username == user.username)
     user_roles = [role.role for role in user_roles]
     is_manager = ROLE_MANAGER in user_roles
@@ -147,10 +153,6 @@ def index():
     current_week_start = get_current_week_start()
     current_week_end = current_week_start + timedelta(days=7)
     week = db.session.query(models.WeeksDone).get(current_week_start)
-    # force creation of team wallet if it doesnt exist
-    get_or_create_team_wallet()
-    create_all_wallets()
-    wallets = db.session.query(models.Wallet).all()
     wallets = [w.as_dict() for w in wallets]
     if week:
         error_message = (
@@ -161,6 +163,7 @@ def index():
         return render_template(
             'index.html',
             is_manager=is_manager,
+            box_amount=box_amount,
             error_message=error_message,
             version=APP_VERSION,
             username=auth.username(),
@@ -213,6 +216,7 @@ def index():
     return render_template(
         'index.html',
         is_manager=is_manager,
+        box_amount=box_amount,
         week=[current_week_start, current_week_end],
         version=APP_VERSION,
         username=auth.username(),
