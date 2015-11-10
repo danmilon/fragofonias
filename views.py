@@ -127,7 +127,7 @@ def index():
     get_or_create_team_wallet()
     create_all_wallets()
     wallets = db.session.query(models.Wallet).all()
-    box_amount = sum((wallet.amount for wallet in wallets if not wallet.is_producer))
+    box_amount = sum((wallet.amount for wallet in wallets))
     user_roles = db.session.query(models.UserRoles).filter(models.UserRoles.username == user.username)
     user_roles = [role.role for role in user_roles]
     is_manager = ROLE_MANAGER in user_roles
