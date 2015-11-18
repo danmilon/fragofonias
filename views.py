@@ -60,7 +60,7 @@ def get_or_create_wallet(username):
 
 
 def get_current_week_start():
-    last_week = db.session.query(models.WeeksDone).order_by(models.WeeksDone.start).first()
+    last_week = db.session.query(models.WeeksDone).order_by(models.WeeksDone.start.desc()).first()
     if last_week:
         last_week_start = last_week.start + timedelta(weeks=1)
     else:
