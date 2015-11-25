@@ -475,7 +475,7 @@ var UserWallet = React.createClass({
 	    })
 	}
     },
-    onCommit: function () {
+    changeAmount: function (amount) {
 	if (this.state.error_message != null) {
 	    alert(this.state.error_message)
 	    return
@@ -484,7 +484,7 @@ var UserWallet = React.createClass({
 	var url = '/wallets/' + this.state.username + '/change_amount'
 	var self = this
 	var request = {
-	    'amount': this.state.input_amount
+	    'amount': amount
 	}
 
 	$.ajax({
@@ -504,6 +504,12 @@ var UserWallet = React.createClass({
 	    }
 	})
     },
+    onIncrease: function () {
+	this.changeAmount(this.state.input_amount)
+    },
+    onDecrease: function () {
+	this.changeAmount(-this.state.input_amount)
+    },
     render: function () {
 	var name = this.state.username
 	if (this.state.is_producer) {
@@ -514,8 +520,12 @@ var UserWallet = React.createClass({
 		<td><strong>{name}</strong></td>
 		<td>{this.state.amount.toFixed(2)}€</td>
 		<td className="text-right"><input className="col-md-5" value={this.state.input_amount} ref="input_amount"
-	    type="number" step="any" onChange={this.onChangeAmount} /><span className="col-md-1">€</span></td>
-		<td className="text-right"><input onClick={this.onCommit} type="button" className="btn btn-primary btn-sm" value="Αύξηση/Μείωση"/></td>
+	    type="number" step="any" min="0" onChange={this.onChangeAmount} /><span className="col-md-1">€</span></td>
+		<td className="text-right">
+		<input onClick={this.onIncrease} type="button" className="btn btn-success btn-sm" value="Αύξηση"/>
+		&nbsp;
+		<input onClick={this.onDecrease} type="button" className="btn btn-warning btn-sm" value="Μείωση"/>
+		</td>
 		</tr>
 	)
     }

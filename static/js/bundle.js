@@ -32682,7 +32682,7 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	    })
 	}
     },
-    onCommit: function () {
+    changeAmount: function (amount) {
 	if (this.state.error_message != null) {
 	    alert(this.state.error_message)
 	    return
@@ -32691,7 +32691,7 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	var url = '/wallets/' + this.state.username + '/change_amount'
 	var self = this
 	var request = {
-	    'amount': this.state.input_amount
+	    'amount': amount
 	}
 
 	$.ajax({
@@ -32711,6 +32711,12 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	    }
 	})
     },
+    onIncrease: function () {
+	this.changeAmount(this.state.input_amount)
+    },
+    onDecrease: function () {
+	this.changeAmount(-this.state.input_amount)
+    },
     render: function () {
 	var name = this.state.username
 	if (this.state.is_producer) {
@@ -32721,8 +32727,12 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 		React.createElement("td", null, React.createElement("strong", null, name)), 
 		React.createElement("td", null, this.state.amount.toFixed(2), "€"), 
 		React.createElement("td", {className: "text-right"}, React.createElement("input", {className: "col-md-5", value: this.state.input_amount, ref: "input_amount", 
-	    type: "number", step: "any", onChange: this.onChangeAmount}), React.createElement("span", {className: "col-md-1"}, "€")), 
-		React.createElement("td", {className: "text-right"}, React.createElement("input", {onClick: this.onCommit, type: "button", className: "btn btn-primary btn-sm", value: "Αύξηση/Μείωση"}))
+	    type: "number", step: "any", min: "0", onChange: this.onChangeAmount}), React.createElement("span", {className: "col-md-1"}, "€")), 
+		React.createElement("td", {className: "text-right"}, 
+		React.createElement("input", {onClick: this.onIncrease, type: "button", className: "btn btn-success btn-sm", value: "Αύξηση"}), 
+		" ", 
+		React.createElement("input", {onClick: this.onDecrease, type: "button", className: "btn btn-warning btn-sm", value: "Μείωση"})
+		)
 		)
 	)
     }
