@@ -32701,9 +32701,7 @@ var UserWallet = React.createClass({displayName: "UserWallet",
 	    contentType: 'application/json',
 	    dataType: 'json',
 	    success: function (data, textStatus, jqXHR) {
-		self.setState({
-		    amount: data.amount
-		})
+		window.location.reload()
 	    },
 	    error: function (data, textStatus, jqXHR) {
 		var error_message = data.responseJSON.error_message
