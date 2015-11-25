@@ -4,7 +4,7 @@ from datetime import timedelta, date
 
 from sqlalchemy.orm import joinedload
 import flask.json as json
-from flask import render_template, jsonify, request
+from flask import render_template, jsonify, request, Response
 from flask_httpauth import HTTPBasicAuth
 from passlib.hash import phpass
 
@@ -19,7 +19,8 @@ TEAM_WALLET_NAME = '!ΤΑΜΕΙΟ ΟΜΑΔΑΣ!'
 ROLE_MANAGER = 'manager'
 APP_VERSION = 'v1'
 
-auth = HTTPBasicAuth(realm='CSA Fragofonias')
+auth_realm = 'CSA Fragofonias'
+auth = HTTPBasicAuth(realm=auth_realm)
 
 
 @auth.verify_password
@@ -213,6 +214,13 @@ def index():
         username=auth.username(),
         data_json=json.dumps(data))
 
+
+@app.route('/logout')
+def logout():
+    return Response(
+        'Αποσυνδεθήκατε επιτυχώς.',
+        401,
+        {'WWW-Authenticate': 'Basic realm="%s"' % auth_realm})
 
 if __name__ == '__main__':
     app.run(debug=True)
