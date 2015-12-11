@@ -159,14 +159,17 @@ var UserTable = React.createClass({
 	    extra_amount: this.getExtraAmount(orderTotal)
 	}
     },
-    onDepositAmountChange: function (ev) {
+    onDepositChange: function (ev) {
+	var amount = parseFloat(ev.target.value)
+	if (isNaN(amount)) {
+	    amount = 0
+	}
+
+	amount = Math.round(amount * 10) / 10
 	this.setState({
-	    deposit_amount: parseInt(ev.target.value, 10)
+	    deposit_amount: amount,
+	    new_wallet_amount: this.state.wallet_amount + amount
 	})
-    },
-    onDeposit: function (ev) {
-	ev.preventDefault()
-	this.setState({new_wallet_amount: this.state.new_wallet_amount + this.state.deposit_amount})
     },
     onExtraChange: function (ev) {
 	var amount = parseFloat(ev.target.value)
@@ -175,7 +178,6 @@ var UserTable = React.createClass({
 	}
 
 	amount = Math.round(amount * 10) / 10
-
 	this.setState({
 	    extra_amount: amount
 	})
@@ -213,20 +215,21 @@ var UserTable = React.createClass({
 		</div>
 		<div className="col-md-5">
 		<div className="row">
-		<input
-	    ref="input_deposit_amount" className="col-md-3 col-md-push-2"
-	    type="number" min="0" step="any" onChange={this.onExtraChange}
-	    value={this.state.extra_amount.toFixed(2)} />
+		<input value={this.state.deposit_amount}
+		ref="input_deposit_amount" className="col-md-3 col-md-push-2"
+		type="number" min="0" step="any" onChange={this.onDepositChange} />
 		<div className="col-md-4 col-md-push-3">
-		Συνεισφορά (€)
+		Κατάθεση (€)
 	    </div>
 		</div>
 		<div className="row">
-		<form action="#" onSubmit={this.onDeposit}>
-		<input value={this.state.deposit_amount} ref="input_deposit_amount" className="col-md-3 col-md-push-2" type="number" min="0" onChange={this.onDepositAmountChange} />
-		<input type="submit" className="btn btn-default
-btn-sm col-md-4 col-md-push-3" value="Κατάθεση (€)"/>
-		</form>
+		<input
+	    ref="input_deposit_amount" className="col-md-3 col-md-push-2"
+	    type="number" min="0" step="any" onChange={this.onExtraChange}
+	    value={this.state.extra_amount} />
+		<div className="col-md-6 col-md-push-3">
+		εκ των οποίων είναι συνεισφορά
+	    </div>
 		</div>
 		</div>
 		</div>
